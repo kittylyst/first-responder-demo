@@ -53,5 +53,23 @@ services:
 #    networks:
 #      - kafka-quickstart-network
 
+  db:
+    image: postgres:14.1-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - '5432:5432'
+    volumes: 
+      - db:/var/lib/postgresql/data
+
   wildfly:
     image: quay.io/wildfly/wildfly:26.1.1.Final-2
+    depends_on:
+      - db
+      - kafka
+
+volumes:
+  db:
+    driver: local
