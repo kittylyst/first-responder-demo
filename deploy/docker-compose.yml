@@ -22,34 +22,36 @@ services:
       - jaeger-all-in-one
 
   # Kafka with ZK
-  zookeeper:
-    image: quay.io/strimzi/kafka:0.23.0-kafka-2.8.0
-    command: [
-      "sh", "-c",
-      "bin/zookeeper-server-start.sh config/zookeeper.properties"
-    ]
-    ports:
-      - "2181:2181"
-    environment:
-      LOG_DIR: /tmp/logs
+#  zookeeper:
+#    image: quay.io/strimzi/kafka:0.23.0-kafka-2.8.0
+#    command: [
+#      "sh", "-c",
+#      "bin/zookeeper-server-start.sh config/zookeeper.properties"
+#    ]
+#    ports:
+#      - "2181:2181"
+#    environment:
+#      LOG_DIR: /tmp/logs
 #    networks:
 #      - kafka-quickstart-network
 
   kafka:
-    image: quay.io/strimzi/kafka:0.23.0-kafka-2.8.0
+#    image: quay.io/strimzi/kafka:0.23.0-kafka-2.8.0
+    image: confluentinc/cp-kafka:7.2.1
     command: [
       "sh", "-c",
-      "bin/kafka-server-start.sh config/server.properties --override listeners=$${KAFKA_LISTENERS} --override advertised.listeners=$${KAFKA_ADVERTISED_LISTENERS} --override zookeeper.connect=$${KAFKA_ZOOKEEPER_CONNECT}"
+      "bin/kafka-server-start.sh config/server.properties --override listeners=$${KAFKA_LISTENERS} --override advertised.listeners=$${KAFKA_ADVERTISED_LISTENERS} "
+#      --override zookeeper.connect=$${KAFKA_ZOOKEEPER_CONNECT}"
     ]
-    depends_on:
-      - zookeeper
+#    depends_on:
+#      - zookeeper
     ports:
       - "9092:9092"
     environment:
       LOG_DIR: "/tmp/logs"
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
       KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+#      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
 #    networks:
 #      - kafka-quickstart-network
 
@@ -57,19 +59,27 @@ services:
     image: postgres:14.1-alpine
     restart: always
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=frdemo
+      - POSTGRES_PASSWORD=frdemo
+      - POSTGRES_DB=frdemo
     ports:
       - '5432:5432'
-    volumes: 
-      - db:/var/lib/postgresql/data
+#    volumes:
+#      - db:/var/lib/postgresql/data
 
   wildfly:
-    image: quay.io/wildfly/wildfly:26.1.1.Final-2
+#    image: quay.io/wildfly/wildfly:26.1.1.Final-2
+    image: localhost/first_responder_demo:latest
+    ports:
+      - '8080:8080'
+    environment:
+      - KAFKA_SERVER=kafka:9092
     depends_on:
       - db
       - kafka
 
 volumes:
   db:
+    driver: local
+  kafka:
     driver: local
