@@ -68,8 +68,8 @@ services:
 #      - db:/var/lib/postgresql/data
 
   wildfly:
-#    image: quay.io/wildfly/wildfly:26.1.1.Final-2
-    image: localhost/first_responder_demo:latest
+#    image: localhost/first_responder_demo:latest
+    image: first_responder_demo:latest
     ports:
       - '8080:8080'
     environment:

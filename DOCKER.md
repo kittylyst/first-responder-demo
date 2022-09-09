@@ -9,7 +9,7 @@ mvn clean package
 Then build a Docker image for the deployed WAR
 
 ```shell
-docker build -t first_responder_demo -f src/main/docker/wildfly/Dockerfile target/
+docker build -t first_responder_demo -f src/main/docker/wildfly/Dockerfile .
 ```
 
 
